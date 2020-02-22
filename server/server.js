@@ -4,6 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+
+
 const app = express();
 // const port = 3000;
 
@@ -32,6 +34,6 @@ app.listen(process.env.PORT, () => {
 })
 
 
-// Un modelo es : un objecto que nos permite hacer operaciones en la BD
+
 
 
