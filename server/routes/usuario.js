@@ -79,9 +79,12 @@ app.get("/usuario", (req, res) => {
 
   let limite = Number(req.query.limite) || 5;
 
+
+
   //   Usuario.find({})
   //solo interesa regresar cierta info
-  Usuario.find({}, "nombre email role estado google img")
+  // Usuario.find({}, "nombre email role estado google img")
+  Usuario.find({estado:true}, "nombre email role estado google img")
     //   Usuario.find({google:true})
     .skip(desde)
     .limit(limite)
@@ -93,8 +96,9 @@ app.get("/usuario", (req, res) => {
         });
       }
 
-      //   Usuario.count({{google:true}}, (err, conteo) => {
-      Usuario.count({}, (err, conteo) => {
+      // Usuario.count({{google:true}}, (err, conteo) => {
+      // Usuario.count({}, (err, conteo) => {
+      Usuario.count({estado:true}, (err, conteo) => {
         res.json({
           ok: true,
           usuarios,
@@ -108,28 +112,56 @@ app.delete("/usuario/:id", (req, res) => {
   //   res.send("delete Usuario");
   let id = req.params.id;
 
-  //Eliminacion fisica
-  Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
-    if (err) {
-      return res.status(400).json({
-        ok: false,
-        err
-      });
-    }
+  //Eliminacion cambiando estado
+  let cambiaEstado = {
+    estado: false
+  };
 
-    if (!usuarioBorrado) {
-      return res.status(400).json({
-        ok: false,
-        error: {
-            message : 'Usuario no encontrado'
-        }
+  Usuario.findByIdAndUpdate(
+    id,
+    cambiaEstado,
+    { new: true },
+    (err, usuarioBorrado) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err
+        });
+      }
+
+      res.json({
+        ok: true,
+        usuario: usuarioBorrado
       });
-    }
-    res.json({
-      ok: true,
-      usuario: usuarioBorrado
     });
-  });
+
+
+
+
+  //Eliminacion fisica
+  // Usuario.findByIdAndRemove(id, (err, usuarioDB) => {
+  //   if (err) {
+  //     return res.status(400).json({
+  //       ok: false,
+  //       err
+  //     });
+  //   }
+
+  //   if (!usuarioDB) {
+  //     return res.status(400).json({
+  //       ok: false,
+  //       error: {
+  //           message : 'Usuario no encontrado'
+  //       }
+  //     });
+  //   }
+  //   res.json({
+  //     ok: true,
+  //     usuario: usuarioDB
+  //   });
+  // });
+
+
 });
 
 module.exports = app;
