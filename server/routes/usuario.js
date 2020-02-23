@@ -1,5 +1,7 @@
 const express = require("express");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
+const _ = require("underscore");
+
 const Usuario = require("../models/usuario");
 
 const app = express();
@@ -31,7 +33,6 @@ app.post("/usuario", (req, res) => {
       });
     }
 
-
     // usuarioDB.password = null;
 
     //status 200 implicito
@@ -46,9 +47,32 @@ app.post("/usuario", (req, res) => {
 
 app.put("/usuario/:id", (req, res) => {
   let id = req.params.id;
-  res.send({
-    id
-  });
+  //   let body = req.body;
+  //PICK: regresa una copia del objecto, filtrando solo los valores que quiero
+  let body = _.pick(req.body, ["nombre", "email", "img", "role", "estado"]);
+
+  Usuario.findByIdAndUpdate(
+    id,
+    body,
+    { new: true, runValidators: true },
+    (err, usuarioDB) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err
+        });
+      }
+
+      res.json({
+        ok: true,
+        usuario: usuarioDB
+      });
+    }
+  );
+
+  //   res.send({
+  //     id
+  //   });
 });
 
 app.delete("/usuario", (req, res) => {
