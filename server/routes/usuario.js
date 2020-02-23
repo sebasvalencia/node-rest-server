@@ -6,10 +6,6 @@ const Usuario = require("../models/usuario");
 
 const app = express();
 
-app.get("/usuario", (req, res) => {
-  res.send("get Usuario");
-});
-
 app.post("/usuario", (req, res) => {
   let body = req.body;
 
@@ -73,6 +69,39 @@ app.put("/usuario/:id", (req, res) => {
   //   res.send({
   //     id
   //   });
+});
+
+app.get("/usuario", (req, res) => {
+  // res.send("get Usuario");
+
+  let desde = req.query.desde || 0; //validar q sea un numero
+  desde = Number(desde);
+
+  let limite = Number(req.query.limite) || 5;
+
+//   Usuario.find({})
+  //solo interesa regresar cierta info
+  Usuario.find({}, 'nombre email role estado google img')
+//   Usuario.find({google:true})
+    .skip(desde)
+    .limit(limite)
+    .exec((err, usuarios) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err
+        });
+      }
+
+    //   Usuario.count({{google:true}}, (err, conteo) => {
+      Usuario.count({}, (err, conteo) => {
+        res.json({
+          ok: true,
+          usuarios,
+          cuantos: conteo
+        });
+      });
+    });
 });
 
 app.delete("/usuario", (req, res) => {
