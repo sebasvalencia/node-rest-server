@@ -17,8 +17,13 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
 // Importamos y usamos las routes del usuario
-app.use( require('./routes/usuario') )
+// app.use( require('./routes/usuario') )
 
+// Importamos y usamos las routes del login
+// app.use( require('./routes/login') )
+
+// Importamos configuracion global de rutas
+app.use(require('./routes/index'))
 
 // conexion a la BD
 // mongoose.connect('mongodb://localhost:27017/cafe', { useNewUrlParser: true, useCreateIndex: true }, (err, res) => {
