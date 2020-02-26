@@ -4,9 +4,12 @@ const _ = require("underscore");
 
 const Usuario = require("../models/usuario");
 
+// const { verificarToken } = require('../middlerwares/autenticacion');
+const  verificarToken  = require('../middlerwares/autenticacion');
+
 const app = express();
 
-app.post("/usuario", (req, res) => {
+app.post("/usuario",verificarToken.verificaToken, (req, res) => {
   let body = req.body;
 
   //Nuevo objecto de tipo Usuario
@@ -41,7 +44,7 @@ app.post("/usuario", (req, res) => {
   // res.send("post Usuario");
 });
 
-app.put("/usuario/:id", (req, res) => {
+app.put("/usuario/:id", verificarToken.verificaToken ,(req, res) => {
   let id = req.params.id;
   //   let body = req.body;
   //PICK: regresa una copia del objecto, filtrando solo los valores que quiero
@@ -71,8 +74,14 @@ app.put("/usuario/:id", (req, res) => {
   //   });
 });
 
-app.get("/usuario", (req, res) => {
+app.get('/usuario', verificarToken.verificaToken, (req, res) => {
   // res.send("get Usuario");
+
+  return res.json({
+    usuario: req.usuario,
+    nombre: req.usuario.nombre,
+    email: req.usuario.email
+  });
 
   let desde = req.query.desde || 0; //validar q sea un numero
   desde = Number(desde);
@@ -108,7 +117,7 @@ app.get("/usuario", (req, res) => {
     });
 });
 
-app.delete("/usuario/:id", (req, res) => {
+app.delete("/usuario/:id", verificarToken.verificaToken, (req, res) => {
   //   res.send("delete Usuario");
   let id = req.params.id;
 
